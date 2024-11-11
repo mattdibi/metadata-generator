@@ -1,0 +1,21 @@
+[tool.poetry]
+name = "metadata-generator"
+version = "0.1.0"
+description = ""
+authors = ["Mattia Dal Ben <matthewdibi@gmail.com>"]
+license = "MIT license"
+readme = "README.md"
+packages = [
+    { include = "metadata-generator"}
+]
+
+[tool.poetry.scripts]
+metadata-generator = "metadata-generator:run"
+
+[tool.poetry.dependencies]
+python = "^3.12"
+
+
+[build-system]
+requires = ["poetry-core"]
+build-backend = "poetry.core.masonry.api"
