@@ -21,17 +21,6 @@ PROJECT_TEMPLATE = '''<?xml version="1.0" encoding="UTF-8"?>
 	<natures>
 		<nature>org.eclipse.m2e.core.maven2Nature</nature>
 	</natures>
-	<filteredResources>
-		<filter>
-			<id>ID</id>
-			<name></name>
-			<type>30</type>
-			<matcher>
-				<id>org.eclipse.core.resources.regexFilterMatcher</id>
-				<arguments>node_modules|\\.git|__CREATED_BY_JAVA_LANGUAGE_SERVER__</arguments>
-			</matcher>
-		</filter>
-	</filteredResources>
 </projectDescription>
 '''
 
@@ -97,7 +86,7 @@ def run():
         for lib in libs:
             classpathentry = ET.Element('classpathentry')
             classpathentry.set('kind', 'lib')
-            classpathentry.set('path', os.path.join('libs', os.path.basename(lib)))
+            classpathentry.set('path', os.path.join('lib', os.path.basename(lib)))
             classpath.append(classpathentry)
 
         # TODO: resources
@@ -116,14 +105,12 @@ def run():
     #
     # Generate .project file
     #
-    id = 1681116377780
     for key,value in map.items():
         if not value["packaging"] == "eclipse-plugin" and not value["packaging"] == "eclipse-test-plugin" and not value["packaging"] == "pom" and not value["packaging"] == "eclipse-repository":
             continue
 
         project = ET.fromstring(PROJECT_TEMPLATE)
         project.find('name').text = value["name"]
-        project.find('.//id').text = str(id)
         project.find('comment').text = ""
 
         if value["packaging"] == "eclipse-plugin" or value["packaging"] == "eclipse-test-plugin":
@@ -172,8 +159,6 @@ def run():
         ET.indent(tree.getroot(), space="    ")
         tree.write(os.path.join(value["path"], '.project'), encoding='utf-8', xml_declaration=True, short_empty_elements=False)
 
-        id += 1
-
     #
     # Generate javaConfig.json
     #
@@ -187,7 +172,7 @@ def run():
             projects.append(value["path"])
 
     javaconfig["projects"] = projects
-    javaconfig["targetPlatform"] = target_platform
+    javaconfig["targetPlatform"] = target_platform[0] # TODO: There can be only one target platform
 
     with open('javaConfig.json', 'w') as f:
         f.write(json.dumps(javaconfig, indent=4))
