@@ -82,6 +82,16 @@ def run():
             classpathentry = ET.Element('classpathentry')
             classpathentry.set('kind', 'src')
             classpathentry.set('path', 'src/main/java')
+
+            if value["packaging"] == "eclipse-test-plugin":
+                # Add attribute test
+                attributes = ET.Element('attributes')
+                attribute = ET.Element('attribute')
+                attribute.set('name', 'test')
+                attribute.set('value', 'true')
+                attributes.append(attribute)
+                classpathentry.append(attributes)
+
             classpath.append(classpathentry)
 
         for lib in libs:
