@@ -114,7 +114,8 @@ def run():
 
         tree = ET.ElementTree(classpath)
         ET.indent(tree.getroot(), space="    ")
-        tree.write(os.path.join(value["path"], '.classpath'), encoding='utf-8', xml_declaration=True, short_empty_elements=False)
+        tree.write(os.path.join(value["path"], '.classpath'), encoding='utf-8', xml_declaration=True, short_empty_elements=True)
+
 
     #
     # Generate .project file
