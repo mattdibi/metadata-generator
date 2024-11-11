@@ -24,7 +24,7 @@ PROJECT_TEMPLATE = '''<?xml version="1.0" encoding="UTF-8"?>
 </projectDescription>
 '''
 
-IGNORE = ['target', 'tools', 'distrib', 'emulator', 'features', 'test-util', 'examples', 'test'] # TODO: Either use a .gitignore style file or a command line argument
+IGNORE = ['target', 'tools', 'distrib', 'emulator', 'features', 'test-util', 'examples'] # TODO: Either use a .gitignore style file or a command line argument
 
 # See: https://github.com/testforstephen/vscode-pde/issues/56#issuecomment-2467400571
 
@@ -78,10 +78,11 @@ def run():
         classpathentry.set('path', 'org.eclipse.pde.core.requiredPlugins')
         classpath.append(classpathentry)
 
-        classpathentry = ET.Element('classpathentry')
-        classpathentry.set('kind', 'src')
-        classpathentry.set('path', 'src/main/java')
-        classpath.append(classpathentry)
+        if os.path.isdir(os.path.join(module_path, 'src/main/java')):
+            classpathentry = ET.Element('classpathentry')
+            classpathentry.set('kind', 'src')
+            classpathentry.set('path', 'src/main/java')
+            classpath.append(classpathentry)
 
         for lib in libs:
             classpathentry = ET.Element('classpathentry')
@@ -91,7 +92,20 @@ def run():
 
         # TODO: resources
 
-        # TODO: test sources
+        if value["packaging"] == "eclipse-test-plugin" and os.path.isdir(os.path.join(module_path, 'src/test/java')):
+            classpathentry = ET.Element('classpathentry')
+            classpathentry.set('kind', 'src')
+            classpathentry.set('path', 'src/test/java')
+
+            # Add attribute test
+            attributes = ET.Element('attributes')
+            attribute = ET.Element('attribute')
+            attribute.set('name', 'test')
+            attribute.set('value', 'true')
+            attributes.append(attribute)
+            classpathentry.append(attributes)
+
+            classpath.append(classpathentry)
 
         classpathentry = ET.Element('classpathentry')
         classpathentry.set('kind', 'output')
