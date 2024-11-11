@@ -41,3 +41,31 @@ The tool will generate the following files:
 - `javaConfig.json` at the root of the project. This config file is used to tell the PDE extension about the locations of the sub projects and target platform file.
 - `.project` file in each sub project. This file is used by Eclipse to identify the project type and dependencies.
 - `.classpath` file in each sub project. This file is used by Eclipse to identify the classpath of the project.
+
+## Development environment setup
+
+#### Install Poetry
+
+```bash
+curl -sSL https://install.python-poetry.org | python3 -
+```
+
+or follow the official instructions [here](https://python-poetry.org/docs/#installing-with-the-official-installer). Tested version: **Poetry 1.8.2**.
+
+#### Install development dependencies
+
+```bash
+poetry install
+```
+
+#### Run unit tests
+
+```bash
+poetry run pytest
+```
+
+#### Build the sources and wheels archives
+
+```bash
+poetry build
+```
