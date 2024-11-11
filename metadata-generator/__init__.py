@@ -5,7 +5,37 @@ import glob
 import json
 import xml.etree.ElementTree as ET
 
-IGNORE = ['target', 'tools', 'distrib', 'emulator', 'features', 'test-util', 'examples'] # TODO: Either use a .gitignore style file or a command line argument
+PROJECT_TEMPLATE = '''<?xml version="1.0" encoding="UTF-8"?>
+<projectDescription>
+	<name>NAME</name>
+	<comment></comment>
+	<projects>
+    </projects>
+	<buildSpec>
+		<buildCommand>
+			<name>org.eclipse.m2e.core.maven2Builder</name>
+			<arguments>
+			</arguments>
+		</buildCommand>
+	</buildSpec>
+	<natures>
+		<nature>org.eclipse.m2e.core.maven2Nature</nature>
+	</natures>
+	<filteredResources>
+		<filter>
+			<id>ID</id>
+			<name></name>
+			<type>30</type>
+			<matcher>
+				<id>org.eclipse.core.resources.regexFilterMatcher</id>
+				<arguments>node_modules|\\.git|__CREATED_BY_JAVA_LANGUAGE_SERVER__</arguments>
+			</matcher>
+		</filter>
+	</filteredResources>
+</projectDescription>
+'''
+
+IGNORE = ['target', 'tools', 'distrib', 'emulator', 'features', 'test-util', 'examples', 'test'] # TODO: Either use a .gitignore style file or a command line argument
 
 # See: https://github.com/testforstephen/vscode-pde/issues/56#issuecomment-2467400571
 
@@ -70,6 +100,10 @@ def run():
             classpathentry.set('path', os.path.join('libs', os.path.basename(lib)))
             classpath.append(classpathentry)
 
+        # TODO: resources
+
+        # TODO: test sources
+
         classpathentry = ET.Element('classpathentry')
         classpathentry.set('kind', 'output')
         classpathentry.set('path', 'target/classes')
@@ -77,7 +111,68 @@ def run():
 
         tree = ET.ElementTree(classpath)
         ET.indent(tree.getroot(), space="    ")
-        tree.write(os.path.join(value["path"], '.classpath'), encoding='utf-8', xml_declaration=True)
+        tree.write(os.path.join(value["path"], '.classpath'), encoding='utf-8', xml_declaration=True, short_empty_elements=False)
+
+    #
+    # Generate .project file
+    #
+    id = 1681116377780
+    for key,value in map.items():
+        if not value["packaging"] == "eclipse-plugin" and not value["packaging"] == "eclipse-test-plugin" and not value["packaging"] == "pom" and not value["packaging"] == "eclipse-repository":
+            continue
+
+        project = ET.fromstring(PROJECT_TEMPLATE)
+        project.find('name').text = value["name"]
+        project.find('.//id').text = str(id)
+        project.find('comment').text = ""
+
+        if value["packaging"] == "eclipse-plugin" or value["packaging"] == "eclipse-test-plugin":
+            buildSpec = project.find('buildSpec')
+
+            buildCommand = ET.Element('buildCommand')
+            buildCommandName = ET.Element('name')
+            buildCommandName.text = 'org.eclipse.jdt.core.javabuilder'
+            buildCommand.append(buildCommandName)
+
+            buildArguments = ET.Element('arguments')
+            buildCommand.append(buildArguments)
+
+            buildSpec.append(buildCommand)
+
+            buildCommand = ET.Element('buildCommand')
+            buildCommandName = ET.Element('name')
+            buildCommandName.text = 'org.eclipse.pde.ManifestBuilder'
+            buildCommand.append(buildCommandName)
+
+            buildArguments = ET.Element('arguments')
+            buildCommand.append(buildArguments)
+
+            buildSpec.append(buildCommand)
+
+            buildCommand = ET.Element('buildCommand')
+            buildCommandName = ET.Element('name')
+            buildCommandName.text = 'org.eclipse.pde.SchemaBuilder'
+            buildCommand.append(buildCommandName)
+
+            buildArguments = ET.Element('arguments')
+            buildCommand.append(buildArguments)
+
+            buildSpec.append(buildCommand)
+
+            natures = project.find('natures')
+            nature = ET.Element('nature')
+            nature.text = 'org.eclipse.pde.PluginNature'
+            natures.append(nature)
+
+            nature = ET.Element('nature')
+            nature.text = 'org.eclipse.jdt.core.javanature'
+            natures.append(nature)
+
+        tree = ET.ElementTree(project)
+        ET.indent(tree.getroot(), space="    ")
+        tree.write(os.path.join(value["path"], '.project'), encoding='utf-8', xml_declaration=True, short_empty_elements=False)
+
+        id += 1
 
     #
     # Generate javaConfig.json
