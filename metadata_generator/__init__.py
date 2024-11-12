@@ -80,9 +80,12 @@ def run():
         tree = ET.parse(pom)
         root = tree.getroot()
 
-        # Get the project name
         packaging = root.find('{http://maven.apache.org/POM/4.0.0}packaging').text
         name = root.find('{http://maven.apache.org/POM/4.0.0}artifactId').text
+
+        # Read build.properties file content
+        build_properties = os.path.join(os.path.dirname(pom), 'build.properties')
+        # TODO: Read the build.properties file and extract the additional source folders (e.g. generated-sources etc). Note: this is a more reliable way to determine the source folders than what we are currently doing
 
         map[pom] = {
                     "path": os.path.dirname(pom),
@@ -140,7 +143,7 @@ def run():
             classpathentry.set('path', os.path.join('lib', os.path.basename(lib)))
             classpath.append(classpathentry)
 
-        # TODO: resources
+        # TODO: resources (see build.properties)
 
         if value["packaging"] == "eclipse-test-plugin" and os.path.isdir(os.path.join(module_path, 'src/test/java')):
             classpathentry = ET.Element('classpathentry')
