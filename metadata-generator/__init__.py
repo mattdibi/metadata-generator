@@ -188,7 +188,7 @@ def run():
     # Generate javaConfig.json
     #
     target_platform = glob.glob('**/*.target', recursive=True)
-    target_platform = [x for x in target_platform if not any(y in x for y in IGNORE)]
+    target_platform = [x for x in target_platform if not any(y in x for y in IGNORE)] # FIXME: the target platform usually resides in the "target-*" folder. This filter gets rid of it.
 
     javaconfig = {}
     projects = []
