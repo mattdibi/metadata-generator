@@ -119,7 +119,7 @@ def run():
 
         classpathentry = ET.Element('classpathentry')
         classpathentry.set('kind', 'output')
-        classpathentry.set('path', 'target/classes')
+        classpathentry.set('path', 'target/classes') # TODO: sometimes this is "bin". How to determine this?
         classpath.append(classpathentry)
 
         tree = ET.ElementTree(classpath)
