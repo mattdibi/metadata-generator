@@ -50,6 +50,12 @@ def run():
             help="Dry run. Do not write any files to disk",
             action="store_true", required=False)
 
+    parser.add_argument(
+            '--patch-target-platform',
+            help="Patch the target platform file with the correct paths",
+            action="store_true", required=False)
+
+
     args = parser.parse_args()
 
     logging.basicConfig(level=args.loglevel)
@@ -230,7 +236,8 @@ def run():
         logger.error("There should be exactly one target platform file. Found: {}".format(len(target_platform)))
         sys.exit(1)
 
-    logger.info("Found target platform file: {}".format(target_platform[0]))
+    target_platform_file = target_platform[0]
+    logger.info("Found target platform file: {}".format(target_platform_file))
     javaconfig = {}
     projects = []
     for key,value in map.items():
@@ -238,8 +245,22 @@ def run():
             projects.append(value["path"])
 
     javaconfig["projects"] = projects
-    javaconfig["targetPlatform"] = target_platform[0] # TODO: There can be only one target platform
+    javaconfig["targetPlatform"] = target_platform_file
 
     if not args.dry_run:
         with open('javaConfig.json', 'w') as f:
             f.write(json.dumps(javaconfig, indent=4))
+
+    #
+    # Patch target platform file
+    #
+    if args.patch_target_platform:
+        logger.info("Patching target platform file...")
+        with open(target_platform_file, 'r') as f:
+            content = f.read()
+
+        content = content.replace('${git_work_tree}', os.path.abspath(os.pardir)) # FIXME: This is a hack. We should use the git work tree from the git repository
+
+        if not args.dry_run:
+            with open(target_platform_file, 'w') as f:
+                f.write(content)
