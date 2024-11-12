@@ -224,12 +224,13 @@ def run():
 
     target_platform = glob.glob('**/*.target', recursive=True)
     logger.debug("Found target platform files: {}".format(target_platform))
-    target_platform = [x for x in target_platform if not any(y in x for y in IGNORE)] # FIXME: the target platform usually resides in the "target-*" folder. This filter gets rid of it.
+    target_platform = [x for x in target_platform if not any(y in x for y in ["distrib"])] # Ignore target platform files in the distrib folder... is there a better way to do this?
 
     if len(target_platform) != 1:
         logger.error("There should be exactly one target platform file. Found: {}".format(len(target_platform)))
         sys.exit(1)
 
+    logger.info("Found target platform file: {}".format(target_platform[0]))
     javaconfig = {}
     projects = []
     for key,value in map.items():
