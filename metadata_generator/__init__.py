@@ -60,15 +60,15 @@ def run():
 
     logging.basicConfig(level=args.loglevel)
 
-    # List all folders containing a pom.xml file in the current directory
-    content = glob.glob('**/pom.xml', recursive=True)
-    content = [x for x in content if not any(y in x for y in IGNORE)]
-    content.sort()
-
     #
     # Scan the project pom.xml files
     #
     logger.info("Scanning project pom.xml files...")
+
+    content = glob.glob('**/pom.xml', recursive=True)
+    content = [x for x in content if not any(y in x for y in IGNORE)]
+    content.sort()
+
     map = {}
     for pom in content:
         # Read pom.xml file content
