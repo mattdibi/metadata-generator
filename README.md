@@ -14,13 +14,22 @@ After installing Python, you can download the latest release of this tool from t
 pip3 install metadata_generator-<version>.whl
 ```
 
-After installing the tool, you can run it by executing the following command:
+### Usage
 
 ```bash
-metadata_generator
+usage: kura-gen [-h] [-d] [--dry-run] [--patch-target-platform]
+
+Kura projects metadata generator
+
+options:
+  -h, --help            show this help message and exit
+  -d, --debug           Print debug information
+  --dry-run             Dry run. Do not write any files to disk
+  --patch-target-platform
+                        Patch the target platform file with the correct paths
 ```
 
-### Usage
+### Generating metadata files
 
 To generate the metadata files, you need to change the current working directory to the root directory of your Kura project. You can do this by running the following command:
 
@@ -34,7 +43,7 @@ cd /path/to/your/kura/project
 After changing the working directory, you can run the following command to generate the metadata files:
 
 ```bash 
-metadata_generator
+kura-gen
 ```
 
 The tool will generate the following files:
