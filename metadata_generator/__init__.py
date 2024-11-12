@@ -255,12 +255,29 @@ def run():
     #
     # Patch target platform file
     #
+
     if args.patch_target_platform:
         logger.info("Patching target platform file...")
+
+        # Walk up the directory tree until we find the .git folder
+        git_parent_folder = None
+        current_searched_directory = os.getcwd()
+        for num_tries in range(5):
+            if os.path.isdir(os.path.join(current_searched_directory, '.git')):
+                git_parent_folder = current_searched_directory
+                break
+            # Go up one directory
+            current_searched_directory = os.path.dirname(current_searched_directory)
+
+        if git_parent_folder is None:
+            logger.error("Could not find the .git folder")
+            sys.exit(1)
+
+        # Replace ${git_work_tree} with the directory containing the .git folder
         with open(target_platform_file, 'r') as f:
             content = f.read()
 
-        content = content.replace('${git_work_tree}', os.path.abspath(os.pardir)) # FIXME: This is a hack. We should use the git work tree from the git repository
+        content = content.replace('${git_work_tree}', git_parent_folder)
 
         if not args.dry_run:
             with open(target_platform_file, 'w') as f:
