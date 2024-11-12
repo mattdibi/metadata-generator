@@ -64,7 +64,7 @@ def run():
             continue
 
         module_path = value["path"]
-        libs = glob.glob(os.path.join(module_path, 'lib/*.jar'))
+        libs = glob.glob(os.path.join(module_path, 'lib/*.jar')) # FIXME: What if the lib folder does not exist (e.g. it's named "libs")?
 
         classpath = ET.Element('classpath')
 
