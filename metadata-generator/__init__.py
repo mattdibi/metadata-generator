@@ -54,7 +54,7 @@ def run():
                     }
 
 
-    print(json.dumps(map, indent=4))
+    print(json.dumps(map, indent=4)) # FIXME: Remove this and add a proper logger
 
     #
     # Generate .classpath file
