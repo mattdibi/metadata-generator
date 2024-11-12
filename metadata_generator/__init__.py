@@ -58,7 +58,7 @@ def run():
 
     args = parser.parse_args()
 
-    logging.basicConfig(level=args.loglevel)
+    logging.basicConfig(level=args.loglevel, format="[%(levelname)-5s] %(message)s")
 
     # Log some information
     logger.info("Starting Kura projects metadata generator...")
