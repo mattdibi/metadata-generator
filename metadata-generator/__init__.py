@@ -1,5 +1,6 @@
 #!usr/bin/env python3
 
+import argparse
 import logging
 import os
 import glob
@@ -32,7 +33,20 @@ IGNORE = ['target', 'tools', 'distrib', 'emulator', 'features', 'test-util', 'ex
 # See: https://github.com/testforstephen/vscode-pde/issues/56#issuecomment-2467400571
 
 def run():
-    logging.basicConfig(level=logging.INFO)
+    """ Kura projects metadata generator """
+
+    parser = argparse.ArgumentParser(
+        description="Kura projects metadata generator",)
+
+    parser.add_argument(
+            '-d', '--debug',
+            help="Print debug information",
+            action="store_const", dest="loglevel", const=logging.DEBUG,
+            default=logging.INFO)
+
+    args = parser.parse_args()
+
+    logging.basicConfig(level=args.loglevel)
 
     # List all folders containing a pom.xml file in the current directory
     content = glob.glob('**/pom.xml', recursive=True)
