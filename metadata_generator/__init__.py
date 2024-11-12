@@ -99,6 +99,10 @@ def run():
                 if os.path.isdir(os.path.join(os.path.dirname(pom), source)):
                     sources.append(source)
 
+            # TODO: If the sources list is empty, we should add a default "src" folder
+            # src/main/java for eclipse-plugin
+            # src/test/java for eclipse-test-plugin
+
         map[pom] = {
                     "path": os.path.dirname(pom),
                     "packaging": packaging,
