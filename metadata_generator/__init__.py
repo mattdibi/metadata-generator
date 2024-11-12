@@ -227,7 +227,7 @@ def run():
     #
     # Generate javaConfig.json
     #
-    logger.info("Generating javaConfig.json...")
+    logger.info("Scanning target platform file...")
 
     target_platform = glob.glob('**/*.target', recursive=True)
     logger.debug("Found target platform files: {}".format(target_platform))
@@ -239,6 +239,8 @@ def run():
 
     target_platform_file = target_platform[0]
     logger.info("Found target platform file: {}".format(target_platform_file))
+
+    logger.info("Generating javaConfig.json...")
     javaconfig = {}
     projects = []
     for key,value in map.items():
@@ -255,7 +257,6 @@ def run():
     #
     # Patch target platform file
     #
-
     if args.patch_target_platform:
         logger.info("Patching target platform file...")
 
