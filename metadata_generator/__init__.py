@@ -60,6 +60,11 @@ def run():
 
     logging.basicConfig(level=args.loglevel)
 
+    # Log some information
+    logger.info("Starting Kura projects metadata generator...")
+    logger.debug("Arguments: {}".format(args))
+    logger.info("Current working directory: {}".format(os.getcwd()))
+
     #
     # Scan the project pom.xml files
     #
