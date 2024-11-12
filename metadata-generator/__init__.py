@@ -1,9 +1,12 @@
 #!usr/bin/env python3
 
+import logging
 import os
 import glob
 import json
 import xml.etree.ElementTree as ET
+
+logger = logging.getLogger(__name__)
 
 PROJECT_TEMPLATE = '''<?xml version="1.0" encoding="UTF-8"?>
 <projectDescription>
@@ -29,6 +32,8 @@ IGNORE = ['target', 'tools', 'distrib', 'emulator', 'features', 'test-util', 'ex
 # See: https://github.com/testforstephen/vscode-pde/issues/56#issuecomment-2467400571
 
 def run():
+    logging.basicConfig(level=logging.INFO)
+
     # List all folders containing a pom.xml file in the current directory
     content = glob.glob('**/pom.xml', recursive=True)
     content = [x for x in content if not any(y in x for y in IGNORE)]
@@ -37,6 +42,7 @@ def run():
     #
     # Scan the project pom.xml files
     #
+    logger.info("Scanning project pom.xml files...")
     map = {}
     for pom in content:
         # Read pom.xml file content
@@ -53,13 +59,15 @@ def run():
                     "name": name
                     }
 
-
-    print(json.dumps(map, indent=4)) # FIXME: Remove this and add a proper logger
+    logger.info("Found {} projects".format(len(map)))
 
     #
     # Generate .classpath file
     #
+    logger.info("Generating .classpath files...")
     for key,value in map.items():
+        logger.debug("Processing project: {}".format(value["name"]))
+
         if(not value["packaging"] == "eclipse-plugin" and not value["packaging"] == "eclipse-test-plugin"):
             continue
 
@@ -130,7 +138,10 @@ def run():
     #
     # Generate .project file
     #
+    logger.info("Generating .project files...")
     for key,value in map.items():
+        logger.debug("Processing project: {}".format(value["name"]))
+
         if not value["packaging"] == "eclipse-plugin" and not value["packaging"] == "eclipse-test-plugin" and not value["packaging"] == "pom" and not value["packaging"] == "eclipse-repository":
             continue
 
@@ -187,7 +198,10 @@ def run():
     #
     # Generate javaConfig.json
     #
+    logger.info("Generating javaConfig.json...")
+
     target_platform = glob.glob('**/*.target', recursive=True)
+    logger.debug("Found target platform files: {}".format(target_platform))
     target_platform = [x for x in target_platform if not any(y in x for y in IGNORE)] # FIXME: the target platform usually resides in the "target-*" folder. This filter gets rid of it.
 
     javaconfig = {}
