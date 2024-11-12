@@ -93,10 +93,11 @@ def run():
             with open(build_properties, 'rb') as f:
                 jprops.load(f)
 
-            for key in jprops.keys():
-                logger.debug("build.properties: {} = {}".format(key, jprops[key]))
+            found_sources = jprops.get("source..").data.split(',')
 
-            sources = jprops.get("source..").data.split(',')
+            for source in found_sources:
+                if os.path.isdir(os.path.join(os.path.dirname(pom), source)):
+                    sources.append(source)
 
         map[pom] = {
                     "path": os.path.dirname(pom),
