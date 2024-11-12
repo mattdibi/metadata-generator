@@ -42,7 +42,12 @@ def run():
             '-d', '--debug',
             help="Print debug information",
             action="store_const", dest="loglevel", const=logging.DEBUG,
-            default=logging.INFO)
+            default=logging.INFO, required=False)
+
+    parser.add_argument(
+            '--dry-run',
+            help="Dry run. Do not write any files to disk",
+            action="store_true", required=False)
 
     args = parser.parse_args()
 
@@ -146,7 +151,8 @@ def run():
 
         tree = ET.ElementTree(classpath)
         ET.indent(tree.getroot(), space="    ")
-        tree.write(os.path.join(value["path"], '.classpath'), encoding='utf-8', xml_declaration=True, short_empty_elements=True)
+        if not args.dry_run:
+            tree.write(os.path.join(value["path"], '.classpath'), encoding='utf-8', xml_declaration=True, short_empty_elements=True)
 
 
     #
@@ -207,7 +213,8 @@ def run():
 
         tree = ET.ElementTree(project)
         ET.indent(tree.getroot(), space="    ")
-        tree.write(os.path.join(value["path"], '.project'), encoding='utf-8', xml_declaration=True, short_empty_elements=False)
+        if not args.dry_run:
+            tree.write(os.path.join(value["path"], '.project'), encoding='utf-8', xml_declaration=True, short_empty_elements=False)
 
     #
     # Generate javaConfig.json
@@ -227,5 +234,6 @@ def run():
     javaconfig["projects"] = projects
     javaconfig["targetPlatform"] = target_platform[0] # TODO: There can be only one target platform
 
-    with open('javaConfig.json', 'w') as f:
-        f.write(json.dumps(javaconfig, indent=4))
+    if not args.dry_run:
+        with open('javaConfig.json', 'w') as f:
+            f.write(json.dumps(javaconfig, indent=4))
