@@ -42,6 +42,13 @@ The tool will generate the following files:
 - `.project` file in each sub project. This file is used by Eclipse to identify the project type and dependencies.
 - `.classpath` file in each sub project. This file is used by Eclipse to identify the classpath of the project.
 
+After generating the metadata files, you can open the project in VSCode and install the required extensions. The following extensions are required to provide code completion and validation for Kura projects:
+
+- [Eclipse PDE support for VS Code](https://marketplace.visualstudio.com/items?itemName=yaozheng.vscode-pde)
+- [Language Support for Java by Red Hat](https://marketplace.visualstudio.com/items?itemName=redhat.java)
+- [Debugger for Java](https://marketplace.visualstudio.com/items?itemName=vscjava.vscode-java-debug)
+- [Java Test Runner](https://marketplace.visualstudio.com/items?itemName=vscjava.vscode-java-test)
+
 ## Development environment setup
 
 #### Install Poetry
