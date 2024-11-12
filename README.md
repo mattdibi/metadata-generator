@@ -50,6 +50,7 @@ The tool will generate the following files:
 - `javaConfig.json` at the root of the project. This config file is used to tell the PDE extension about the locations of the sub projects and target platform file.
 - `.project` file in each sub project. This file is used by Eclipse to identify the project type and dependencies.
 - `.classpath` file in each sub project. This file is used by Eclipse to identify the classpath of the project.
+- **if the `--patch-target-platform` option is used** the script will also update the target platform file with the correct paths (i.e. substitute the `${git_work_tree}` variable with the path of the git repository root).
 
 After generating the metadata files, you can open the project in VSCode and install the required extensions. The following extensions are required to provide code completion and validation for Kura projects:
 
