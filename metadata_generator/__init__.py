@@ -131,6 +131,7 @@ def run():
         for lib in libs:
             classpathentry = ET.Element('classpathentry')
             classpathentry.set('kind', 'lib')
+            classpathentry.set('exported', 'true')
             classpathentry.set('path', os.path.join('lib', os.path.basename(lib)))
             classpath.append(classpathentry)
 
