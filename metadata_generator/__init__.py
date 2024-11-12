@@ -8,6 +8,8 @@ import glob
 import json
 import xml.etree.ElementTree as ET
 
+from jproperties import Properties
+
 logger = logging.getLogger(__name__)
 
 PROJECT_TEMPLATE = '''<?xml version="1.0" encoding="UTF-8"?>
@@ -69,6 +71,7 @@ def run():
     # Scan the project pom.xml files
     #
     logger.info("Scanning project pom.xml files...")
+    jprops = Properties()
 
     content = glob.glob('**/pom.xml', recursive=True)
     content = [x for x in content if not any(y in x for y in IGNORE)]
@@ -84,13 +87,22 @@ def run():
         name = root.find('{http://maven.apache.org/POM/4.0.0}artifactId').text
 
         # Read build.properties file content
+        sources = []
         build_properties = os.path.join(os.path.dirname(pom), 'build.properties')
-        # TODO: Read the build.properties file and extract the additional source folders (e.g. generated-sources etc). Note: this is a more reliable way to determine the source folders than what we are currently doing
+        if os.path.isfile(build_properties):
+            with open(build_properties, 'rb') as f:
+                jprops.load(f)
+
+            for key in jprops.keys():
+                logger.debug("build.properties: {} = {}".format(key, jprops[key]))
+
+            sources = jprops.get("source..").data.split(',')
 
         map[pom] = {
                     "path": os.path.dirname(pom),
                     "packaging": packaging,
-                    "name": name
+                    "name": name,
+                    "sources": sources
                     }
 
     logger.info("Found {} projects".format(len(map)))
@@ -120,10 +132,10 @@ def run():
         classpathentry.set('path', 'org.eclipse.pde.core.requiredPlugins')
         classpath.append(classpathentry)
 
-        if os.path.isdir(os.path.join(module_path, 'src/main/java')):
+        for source in value["sources"]:
             classpathentry = ET.Element('classpathentry')
             classpathentry.set('kind', 'src')
-            classpathentry.set('path', 'src/main/java')
+            classpathentry.set('path', source)
 
             if value["packaging"] == "eclipse-test-plugin":
                 # Add attribute test
@@ -141,23 +153,6 @@ def run():
             classpathentry.set('kind', 'lib')
             classpathentry.set('exported', 'true')
             classpathentry.set('path', os.path.join('lib', os.path.basename(lib)))
-            classpath.append(classpathentry)
-
-        # TODO: resources (see build.properties)
-
-        if value["packaging"] == "eclipse-test-plugin" and os.path.isdir(os.path.join(module_path, 'src/test/java')):
-            classpathentry = ET.Element('classpathentry')
-            classpathentry.set('kind', 'src')
-            classpathentry.set('path', 'src/test/java')
-
-            # Add attribute test
-            attributes = ET.Element('attributes')
-            attribute = ET.Element('attribute')
-            attribute.set('name', 'test')
-            attribute.set('value', 'true')
-            attributes.append(attribute)
-            classpathentry.append(attributes)
-
             classpath.append(classpathentry)
 
         classpathentry = ET.Element('classpathentry')
