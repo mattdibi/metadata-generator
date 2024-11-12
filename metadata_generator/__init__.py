@@ -1,4 +1,4 @@
-#!usr/bin/env python3
+""" Kura projects metadata generator """
 
 import argparse
 import logging

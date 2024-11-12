@@ -1,16 +1,16 @@
 [tool.poetry]
-name = "metadata-generator"
+name = "metadata_generator"
 version = "0.1.0"
 description = ""
 authors = ["Mattia Dal Ben <matthewdibi@gmail.com>"]
 license = "MIT license"
 readme = "README.md"
 packages = [
-    { include = "metadata-generator"}
+    { include = "metadata_generator"}
 ]
 
 [tool.poetry.scripts]
-metadata-generator = "metadata-generator:run"
+kura-gen = "metadata_generator:run"
 
 [tool.poetry.dependencies]
 python = "^3.12"
