@@ -8,7 +8,7 @@ This project is a simple tool to generate Eclipse metadata for Kura projects. It
 
 To use this tool, you need to have Python 3 installed in your system. You can download it from the [official website](https://www.python.org/downloads/).
 
-After installing Python, you can download the latest release of this tool from the [releases page](). Simply install the tool by running the following command:
+After installing Python, you can download the latest release of this tool from the [releases page](https://github.com/mattdibi/metadata-generator/releases). Simply install the tool by running the following command:
 
 ```bash
 pip3 install metadata_generator-<version>.whl
