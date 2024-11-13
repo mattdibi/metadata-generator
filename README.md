@@ -29,7 +29,7 @@ options:
                         Patch the target platform file with the correct paths
 ```
 
-**Note**: the `--patch-target-platform` option is used to substitute the `${git_work_tree}` variable in the target platform file with the path of the git repository root. This is mainly used for the Kura repository, where the target platform file contains the `${git_work_tree}` variable.
+**Note**: the `--patch-target-platform` option is used to substitute the `${git_work_tree}` variable in the target platform file with the path of the git repository root. This is mainly used **for the Kura repository**, where the target platform file contains the `${git_work_tree}` variable.
 
 ### Generating metadata files
 
