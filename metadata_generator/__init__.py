@@ -77,7 +77,7 @@ def run():
     content = [x for x in content if not any(y in x for y in IGNORE)]
     content.sort()
 
-    map = {}
+    map = {} # TODO: Refactor to use list of dictionaries
     for pom in content:
         # Read pom.xml file content
         tree = ET.parse(pom)
