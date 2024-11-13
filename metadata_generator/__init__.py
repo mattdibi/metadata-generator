@@ -129,6 +129,7 @@ def run():
             continue
 
         module_path = value["path"]
+        # TODO: Move this to the beginning of the script where all the scanning is done
         libs = glob.glob(os.path.join(module_path, 'lib/*.jar')) # FIXME: What if the lib folder does not exist (e.g. it's named "libs")?
 
         classpath = ET.Element('classpath')
