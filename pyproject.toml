@@ -1,22 +1,16 @@
-[tool.poetry]
-name = "metadata_generator"
+[project]
+name = "metadata-generator"
 version = "0.2.0"
-description = ""
-authors = ["Mattia Dal Ben <matthewdibi@gmail.com>"]
-license = "MIT license"
+description = "Kura projects metadata generator"
 readme = "README.md"
-packages = [
-    { include = "metadata_generator"}
+requires-python = ">=3.9"
+dependencies = [
+    "jproperties>=2.1.2",
 ]
 
-[tool.poetry.scripts]
-kura-gen = "metadata_generator:run"
+[project.scripts]
+kura-gen = "generator:main"
 
-[tool.poetry.dependencies]
-python = "^3.12"
-jproperties = "^2.1.2"
-
-
-[build-system]
-requires = ["poetry-core"]
-build-backend = "poetry.core.masonry.api"
+[project.urls]
+"Homepage" = "https://github.com/mattdibi/metadata-generator"
+"Bug Tracker" = "https://github.com/mattdibi/metadata-generator/issues"

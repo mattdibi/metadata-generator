@@ -64,28 +64,18 @@ After generating the metadata files, you can open the project in VSCode and inst
 
 ## Development environment setup
 
-#### Install Poetry
+#### Install uv
+
+Take a look at the official documentation [here](https://docs.astral.sh/uv/getting-started/installation/)
+
+#### Run the tool
 
 ```bash
-curl -sSL https://install.python-poetry.org | python3 -
-```
-
-or follow the official instructions [here](https://python-poetry.org/docs/#installing-with-the-official-installer). Tested version: **Poetry 1.8.2**.
-
-#### Install development dependencies
-
-```bash
-poetry install
-```
-
-#### Run unit tests
-
-```bash
-poetry run pytest
+uv run generator.py
 ```
 
 #### Build the sources and wheels archives
 
 ```bash
-poetry build
+uv build
 ```
