@@ -77,7 +77,7 @@ def main():
     content = [x for x in content if not any(y in x for y in IGNORE)]
     content.sort()
 
-    map = {} # TODO: Refactor to use list of dictionaries
+    modules = []
     for pom in content:
         # Read pom.xml file content
         tree = ET.parse(pom)
@@ -109,26 +109,26 @@ def main():
         if not sources:
             logger.warning("No sources found for project: {}".format(name))
 
-        map[pom] = {
+        modules.append({
                     "path": os.path.dirname(pom),
                     "packaging": packaging,
                     "name": name,
                     "sources": sources
-                    }
+                    })
 
-    logger.info("Found {} projects".format(len(map)))
+    logger.info("Found {} projects".format(len(modules)))
 
     #
     # Generate .classpath file
     #
     logger.info("Generating .classpath files...")
-    for key,value in map.items():
-        logger.debug("Processing project: {}".format(value["name"]))
+    for module in modules:
+        logger.debug("Processing project: {}".format(module["name"]))
 
-        if(not value["packaging"] == "eclipse-plugin" and not value["packaging"] == "eclipse-test-plugin"):
+        if(not module["packaging"] == "eclipse-plugin" and not module["packaging"] == "eclipse-test-plugin"):
             continue
 
-        module_path = value["path"]
+        module_path = module["path"]
         # TODO: Move this to the beginning of the script where all the scanning is done
         libs = glob.glob(os.path.join(module_path, 'lib/*.jar')) # FIXME: What if the lib folder does not exist (e.g. it's named "libs")?
 
@@ -144,12 +144,12 @@ def main():
         classpathentry.set('path', 'org.eclipse.pde.core.requiredPlugins')
         classpath.append(classpathentry)
 
-        for source in value["sources"]:
+        for source in module["sources"]:
             classpathentry = ET.Element('classpathentry')
             classpathentry.set('kind', 'src')
             classpathentry.set('path', source)
 
-            if value["packaging"] == "eclipse-test-plugin":
+            if module["packaging"] == "eclipse-test-plugin":
                 # Add attribute test
                 attributes = ET.Element('attributes')
                 attribute = ET.Element('attribute')
@@ -175,24 +175,24 @@ def main():
         tree = ET.ElementTree(classpath)
         ET.indent(tree.getroot(), space="    ")
         if not args.dry_run:
-            tree.write(os.path.join(value["path"], '.classpath'), encoding='utf-8', xml_declaration=True, short_empty_elements=True)
+            tree.write(os.path.join(module["path"], '.classpath'), encoding='utf-8', xml_declaration=True, short_empty_elements=True)
 
 
     #
     # Generate .project file
     #
     logger.info("Generating .project files...")
-    for key,value in map.items():
-        logger.debug("Processing project: {}".format(value["name"]))
+    for module in modules:
+        logger.debug("Processing project: {}".format(module["name"]))
 
-        if not value["packaging"] == "eclipse-plugin" and not value["packaging"] == "eclipse-test-plugin" and not value["packaging"] == "pom" and not value["packaging"] == "eclipse-repository":
+        if not module["packaging"] == "eclipse-plugin" and not module["packaging"] == "eclipse-test-plugin" and not module["packaging"] == "pom" and not module["packaging"] == "eclipse-repository":
             continue
 
         project = ET.fromstring(PROJECT_TEMPLATE)
-        project.find('name').text = value["name"]
+        project.find('name').text = module["name"]
         project.find('comment').text = ""
 
-        if value["packaging"] == "eclipse-plugin" or value["packaging"] == "eclipse-test-plugin":
+        if module["packaging"] == "eclipse-plugin" or module["packaging"] == "eclipse-test-plugin":
             buildSpec = project.find('buildSpec')
 
             buildCommand = ET.Element('buildCommand')
@@ -237,7 +237,7 @@ def main():
         tree = ET.ElementTree(project)
         ET.indent(tree.getroot(), space="    ")
         if not args.dry_run:
-            tree.write(os.path.join(value["path"], '.project'), encoding='utf-8', xml_declaration=True, short_empty_elements=False)
+            tree.write(os.path.join(module["path"], '.project'), encoding='utf-8', xml_declaration=True, short_empty_elements=False)
 
     #
     # Generate javaConfig.json
@@ -258,9 +258,9 @@ def main():
     logger.info("Generating javaConfig.json...")
     javaconfig = {}
     projects = []
-    for key,value in map.items():
-        if(value["packaging"] == "eclipse-plugin" or value["packaging"] == "eclipse-test-plugin"):
-            projects.append(value["path"])
+    for module in modules:
+        if(module["packaging"] == "eclipse-plugin" or module["packaging"] == "eclipse-test-plugin"):
+            projects.append(module["path"])
 
     javaconfig["projects"] = projects
     javaconfig["targetPlatform"] = target_platform_file
