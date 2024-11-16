@@ -32,6 +32,8 @@ PROJECT_TEMPLATE = '''<?xml version="1.0" encoding="UTF-8"?>
 '''
 
 IGNORE = ['target', 'tools', 'distrib', 'emulator', 'features', 'test-util', 'examples'] # TODO: Either use a .gitignore style file or a command line argument
+SUPPORTED_PACKAGING_TYPES = ["eclipse-plugin", "eclipse-test-plugin", "pom", "eclipse-repository"]
+PLUGIN_PACKAGING_TYPES = ["eclipse-plugin", "eclipse-test-plugin"]
 
 # See: https://github.com/testforstephen/vscode-pde/issues/56#issuecomment-2467400571
 
@@ -131,7 +133,7 @@ def main():
     for module in modules:
         logger.debug("Processing project: {}".format(module["name"]))
 
-        if(not module["packaging"] == "eclipse-plugin" and not module["packaging"] == "eclipse-test-plugin"):
+        if not module["packaging"] in PLUGIN_PACKAGING_TYPES:
             continue
 
         classpath = ET.Element('classpath')
@@ -187,14 +189,14 @@ def main():
     for module in modules:
         logger.debug("Processing project: {}".format(module["name"]))
 
-        if not module["packaging"] == "eclipse-plugin" and not module["packaging"] == "eclipse-test-plugin" and not module["packaging"] == "pom" and not module["packaging"] == "eclipse-repository":
+        if not module["packaging"] in SUPPORTED_PACKAGING_TYPES:
             continue
 
         project = ET.fromstring(PROJECT_TEMPLATE)
         project.find('name').text = module["name"]
         project.find('comment').text = ""
 
-        if module["packaging"] == "eclipse-plugin" or module["packaging"] == "eclipse-test-plugin":
+        if module["packaging"] in PLUGIN_PACKAGING_TYPES:
             buildSpec = project.find('buildSpec')
 
             buildCommand = ET.Element('buildCommand')
@@ -258,15 +260,15 @@ def main():
     logger.info("Found target platform file: {}".format(target_platform_file))
 
     logger.info("Generating javaConfig.json...")
-    javaconfig = {}
     projects = []
     for module in modules:
-        if(module["packaging"] == "eclipse-plugin" or module["packaging"] == "eclipse-test-plugin"):
+        if module["packaging"] in PLUGIN_PACKAGING_TYPES:
             projects.append(module["path"])
 
-    javaconfig["projects"] = projects
-    javaconfig["targetPlatform"] = target_platform_file
-
+    javaconfig = {
+            "projects": projects,
+            "targetPlatform": target_platform_file
+    }
     if not args.dry_run:
         with open('javaConfig.json', 'w') as f:
             f.write(json.dumps(javaconfig, indent=4))
