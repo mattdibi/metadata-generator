@@ -10,3 +10,7 @@ dependencies = [
 
 [project.scripts]
 kura-gen = "generator:main"
+
+[project.urls]
+"Homepage" = "https://github.com/mattdibi/metadata-generator"
+"Bug Tracker" = "https://github.com/mattdibi/metadata-generator/issues"
