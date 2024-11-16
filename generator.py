@@ -86,6 +86,11 @@ def main():
         packaging = root.find('{http://maven.apache.org/POM/4.0.0}packaging').text
         name = root.find('{http://maven.apache.org/POM/4.0.0}artifactId').text
 
+        # Scan for libraries
+        libs = glob.glob(os.path.join(os.path.dirname(pom), 'lib/*jar'))
+        # FIXME: What if the lib folder does not exist (e.g. it's named "libs")?
+        # Could we extract some info from the build.properties?
+
         # Read build.properties file content
         sources = []
         build_properties = os.path.join(os.path.dirname(pom), 'build.properties')
@@ -113,7 +118,8 @@ def main():
                     "path": os.path.dirname(pom),
                     "packaging": packaging,
                     "name": name,
-                    "sources": sources
+                    "sources": sources,
+                    "libs": libs
                     })
 
     logger.info("Found {} projects".format(len(modules)))
@@ -127,10 +133,6 @@ def main():
 
         if(not module["packaging"] == "eclipse-plugin" and not module["packaging"] == "eclipse-test-plugin"):
             continue
-
-        module_path = module["path"]
-        # TODO: Move this to the beginning of the script where all the scanning is done
-        libs = glob.glob(os.path.join(module_path, 'lib/*.jar')) # FIXME: What if the lib folder does not exist (e.g. it's named "libs")?
 
         classpath = ET.Element('classpath')
 
@@ -160,7 +162,7 @@ def main():
 
             classpath.append(classpathentry)
 
-        for lib in libs:
+        for lib in module["libs"]:
             classpathentry = ET.Element('classpathentry')
             classpathentry.set('kind', 'lib')
             classpathentry.set('exported', 'true')
