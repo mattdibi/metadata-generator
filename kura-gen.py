@@ -35,7 +35,7 @@ IGNORE = ['target', 'tools', 'distrib', 'emulator', 'features', 'test-util', 'ex
 
 # See: https://github.com/testforstephen/vscode-pde/issues/56#issuecomment-2467400571
 
-def run():
+def main():
     """ Kura projects metadata generator """
 
     parser = argparse.ArgumentParser(
@@ -298,3 +298,6 @@ def run():
         if not args.dry_run:
             with open(target_platform_file, 'w') as f:
                 f.write(content)
+
+if __name__ == '__main__':
+    main()
