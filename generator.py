@@ -194,7 +194,6 @@ def main():
 
         project = ET.fromstring(PROJECT_TEMPLATE)
         project.find('name').text = module["name"]
-        project.find('comment').text = ""
 
         if module["packaging"] in PLUGIN_PACKAGING_TYPES:
             buildSpec = project.find('buildSpec')
