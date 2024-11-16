@@ -35,10 +35,9 @@ IGNORE = ['target', 'tools', 'distrib', 'emulator', 'features', 'test-util', 'ex
 SUPPORTED_PACKAGING_TYPES = ["eclipse-plugin", "eclipse-test-plugin", "pom", "eclipse-repository"]
 PLUGIN_PACKAGING_TYPES = ["eclipse-plugin", "eclipse-test-plugin"]
 
-# See: https://github.com/testforstephen/vscode-pde/issues/56#issuecomment-2467400571
-
 def main():
     """ Kura projects metadata generator """
+    # See: https://github.com/testforstephen/vscode-pde/issues/56#issuecomment-2467400571
 
     parser = argparse.ArgumentParser(
         description="Kura projects metadata generator",)
