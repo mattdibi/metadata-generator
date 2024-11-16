@@ -7,3 +7,6 @@ requires-python = ">=3.9"
 dependencies = [
     "jproperties>=2.1.2",
 ]
+
+[project.scripts]
+kura-gen = "generator:main"
