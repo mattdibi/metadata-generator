@@ -62,6 +62,38 @@ After generating the metadata files, you can open the project in VSCode and inst
 - [Debugger for Java](https://marketplace.visualstudio.com/items?itemName=vscjava.vscode-java-debug)
 - [Java Test Runner](https://marketplace.visualstudio.com/items?itemName=vscjava.vscode-java-test)
 
+#### Example setup
+
+Here follows an example of how to setup a project in VSCode using the metadata generator:
+
+1. Clone the project repository
+
+```bash
+git clone https://github.com/my-awesome-kura-project.git && cd my-awesome-kura-project
+```
+
+2. Build the project
+
+```bash
+mvn clean install
+```
+
+3. Generate the metadata files (assuming the `kura-gen` tool is installed)
+
+```bash
+kura-gen
+```
+
+4. Open the project in VSCode
+
+```bash
+code .
+```
+
+5. Install the required extensions
+
+6. ...and you're done!
+
 ## Development environment setup
 
 #### Install uv
