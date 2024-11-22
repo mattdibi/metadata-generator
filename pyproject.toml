@@ -3,14 +3,21 @@ name = "metadata-generator"
 version = "0.2.0"
 description = "Kura projects metadata generator"
 readme = "README.md"
+authors = [
+    { name = "Mattia Dal Ben", email = "matthewdibi@gmail.com" }
+]
 requires-python = ">=3.9"
 dependencies = [
     "jproperties>=2.1.2",
 ]
 
 [project.scripts]
-kura-gen = "generator:main"
+kura-gen = "metadata_generator:main"
 
 [project.urls]
 "Homepage" = "https://github.com/mattdibi/metadata-generator"
 "Bug Tracker" = "https://github.com/mattdibi/metadata-generator/issues"
+
+[build-system]
+requires = ["hatchling"]
+build-backend = "hatchling.build"
