@@ -12,7 +12,7 @@ dependencies = [
 ]
 
 [project.scripts]
-metadata-generator = "metadata_generator:main"
+kura-gen = "metadata_generator:main"
 
 [project.urls]
 "Homepage" = "https://github.com/mattdibi/metadata-generator"
