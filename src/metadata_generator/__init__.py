@@ -300,6 +300,3 @@ def main():
         if not args.dry_run:
             with open(target_platform_file, 'w') as f:
                 f.write(content)
-
-if __name__ == '__main__':
-    main()
