@@ -17,7 +17,7 @@ pip3 install metadata_generator-<version>.whl
 ### Usage
 
 ```bash
-usage: kura-gen [-h] [-d] [--dry-run] [--patch-target-platform]
+usage: kura-gen [-h] [-d] [--dry-run] [-t TARGET_PLATFORM] [--patch-target-platform]
 
 Kura projects metadata generator
 
@@ -25,6 +25,8 @@ options:
   -h, --help            show this help message and exit
   -d, --debug           Print debug information
   --dry-run             Dry run. Do not write any files to disk
+  -t, --target-platform TARGET_PLATFORM
+                        Path to the target platform file
   --patch-target-platform
                         Patch the target platform file with the correct paths
 ```

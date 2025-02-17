@@ -50,8 +50,13 @@ def main():
 
     parser.add_argument(
             '--dry-run',
-            help="Dry run. Do not write any files to disk",
+            help="Dry run. Do not write any file to disk",
             action="store_true", required=False)
+
+    parser.add_argument(
+            '-t', '--target-platform',
+            help="Path to the target platform file",
+            type=str, required=False)
 
     parser.add_argument(
             '--patch-target-platform',
@@ -244,17 +249,28 @@ def main():
     #
     # Generate javaConfig.json
     #
-    logger.info("Scanning target platform file...")
+    if args.target_platform:
+        logger.info("Using target platform file: {}".format(args.target_platform))
 
-    target_platform = glob.glob('**/*.target', recursive=True)
-    logger.debug("Found target platform files: {}".format(target_platform))
-    target_platform = [x for x in target_platform if not any(y in x for y in ["distrib"])] # Ignore target platform files in the distrib folder... is there a better way to do this?
+        if not os.path.isfile(args.target_platform):
+            logger.error("Target platform file does not exist: {}".format(args.target_platform))
+            sys.exit(1)
 
-    if len(target_platform) != 1:
-        logger.error("There should be exactly one target platform file. Found: {}".format(len(target_platform)))
-        sys.exit(1)
+        target_platform_file = args.target_platform
 
-    target_platform_file = target_platform[0]
+    else:
+        logger.info("Scanning target platform file...")
+
+        target_platform = glob.glob('**/*.target', recursive=True)
+        logger.debug("Found target platform files: {}".format(target_platform))
+        target_platform = [x for x in target_platform if not any(y in x for y in ["distrib"])] # Ignore target platform files in the distrib folder... is there a better way to do this?
+
+        if len(target_platform) != 1:
+            logger.error("There should be exactly one target platform file. Found: {}. Re-run the script with the --target-platform argument".format(len(target_platform)))
+            sys.exit(1)
+
+        target_platform_file = target_platform[0]
+
     logger.info("Found target platform file: {}".format(target_platform_file))
 
     logger.info("Generating javaConfig.json...")
@@ -277,25 +293,13 @@ def main():
     if args.patch_target_platform:
         logger.info("Patching target platform file...")
 
-        # Walk up the directory tree until we find the .git folder
-        git_parent_folder = None
-        current_searched_directory = os.getcwd()
-        for num_tries in range(5):
-            if os.path.isdir(os.path.join(current_searched_directory, '.git')):
-                git_parent_folder = current_searched_directory
-                break
-            # Go up one directory
-            current_searched_directory = os.path.dirname(current_searched_directory)
+        target_platform_directory = os.path.dirname(target_platform_file)
 
-        if git_parent_folder is None:
-            logger.error("Could not find the .git folder")
-            sys.exit(1)
-
-        # Replace ${git_work_tree} with the directory containing the .git folder
+        # Replace ${project_loc} with the directory containing the target platform file
         with open(target_platform_file, 'r') as f:
             content = f.read()
 
-        content = content.replace('${git_work_tree}', git_parent_folder)
+        content = content.replace('${project_loc}', os.path.abspath(target_platform_directory))
 
         if not args.dry_run:
             with open(target_platform_file, 'w') as f:
