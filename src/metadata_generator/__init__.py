@@ -293,26 +293,13 @@ def main():
     if args.patch_target_platform:
         logger.info("Patching target platform file...")
 
-        # Walk up the directory tree until we find the .git folder
-        git_parent_folder = None
-        current_searched_directory = os.getcwd()
-        for num_tries in range(5):
-            if os.path.isdir(os.path.join(current_searched_directory, '.git')):
-                git_parent_folder = current_searched_directory
-                break
-            # Go up one directory
-            current_searched_directory = os.path.dirname(current_searched_directory)
+        target_platform_directory = os.path.dirname(target_platform_file)
 
-        if git_parent_folder is None:
-            logger.error("Could not find the .git folder")
-            sys.exit(1)
-
-        # Replace ${git_work_tree} with the directory containing the .git folder
+        # Replace ${project_loc} with the directory containing the target platform file
         with open(target_platform_file, 'r') as f:
             content = f.read()
 
-        content = content.replace('${git_work_tree}', git_parent_folder)
-        content = content.replace('${project_loc}', git_parent_folder)
+        content = content.replace('${project_loc}', os.path.abspath(target_platform_directory))
 
         if not args.dry_run:
             with open(target_platform_file, 'w') as f:
